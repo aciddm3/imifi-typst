@@ -1,68 +1,32 @@
 // === beamerSFU.typ ===
 // Шаблон презентации в стиле СФУ (адаптация beamerSFU-VKR.sty)
-
-// =====================================================
-// 1. ЦВЕТА (из оригинала)
-// =====================================================
 #import "@preview/polylux:0.4.0": *
 
 #let IMorange = rgb("#fc2200")      // RGB(252, 34, 0)
+#let IMtext_orange = rgb("#cc0000")
 #let IMgray = rgb("#474646")        // RGB(71, 70, 70)
-#let IMblue = rgb("#0000ff")        // для \bluetext
+#let IMblue = rgb("#0000ff")        // от \bluetext
+#let IMvery_light_gray = rgb("#f2f2f2")
 
+#let shadow_box(inset: 14pt, radius: 16pt, content) = box(
+  width: 100%,
+  radius: radius,
+  inset: inset,
+  stroke: 3pt
+    + gradient.linear(
+      angle: 60deg,
+      (rgb(0, 0, 0, 0), 0%),
+      (rgb(0, 0, 0, 0), 30%),
+      (rgb(0, 0, 0, 60%), 100%),
+    ),
+)[#content]
 
-#set page(
-  paper: "presentation-16-9",
-  margin: (x: 0.8cm, y: 0.8cm),
-)
+#let block(title: "", body) = shadow_box(inset: 0pt, radius: 0pt, stack(
+  dir: ttb,
+  rect(width: 100%, fill: IMgray)[#text(fill: white, title)],
+  rect(width: 100%, stroke: none)[#body],
+))
 
-#set text(
-  font: "DejaVu Sans",
-  size: 11pt,
-  lang: "ru",
-  hyphenate: true,
-)
-
-#set text(fill: IMgray)
-
-#show heading: it => {
-  set text(fill: IMgray, weight: "bold")
-  if it.level == 1 {
-    set text(size: 28pt)
-  } else if it.level == 2 {
-    set text(size: 22pt)
-  }
-  it.body
-}
-
-#set list(
-  marker: [--], // аналог label=--
-  indent: 1.5em,
-)
-
-#set enum(
-  numbering: "{1})", // 1), 2), ...
-  indent: 1.5em,
-)
-
-#let block(title: none, body) = {
-  rect(
-    fill: IMgray,
-    inset: 8pt,
-    radius: 3pt,
-    [
-      #if title != none {
-        text(fill: white, weight: "bold", size: 14pt)[#title]
-        v(4pt)
-        line(stroke: white)
-        v(4pt)
-      }
-      #body
-    ],
-  )
-}
-
-#let alert(body) = text(fill: IMorange)[#body]
 #let bluetext(body) = text(fill: IMblue)[#body]
 
 #let IMslide(
@@ -71,23 +35,58 @@
   author: "",
   content,
 ) = {
+  set page(
+    paper: "presentation-16-9",
+    margin: (x: 0.0cm, y: 0.0cm),
+  )
+  set list(
+    marker: [--], // аналог label=--
+    indent: 1.5em,
+  )
+
+  set enum(
+    numbering: id => text()[#id)],
+    indent: 1.5em,
+  )
   slide(
     grid(
-      rows: (1.6cm, 1fr, 1.0cm),
+      rows: (3.2cm, 1fr, 1.0cm),
       columns: 100%,
       gutter: 0pt,
 
-      if slide_title != none {
-        rect(
-          fill: IMgray,
-          inset: (x: 0.8cm, y: 0.3cm),
-          text(fill: white, size: 20pt, weight: "bold")[#slide_title],
-          height: 100%,
-          width: 100%,
-        )
-      },
 
-      align(horizon, content),
+      stack(
+        grid(
+          columns: (1fr, 1fr),
+          rect(
+            fill: IMgray,
+            stroke: none,
+            inset: (x: 0.8cm, y: 0.3cm),
+            height: 20%,
+            width: 100%,
+          ),
+          rect(
+            fill: IMorange,
+            stroke: none,
+            inset: (x: 0.8cm, y: 0.3cm),
+            height: 20%,
+            width: 100%,
+          ),
+        ),
+        rect(
+          fill: IMvery_light_gray,
+          stroke: none,
+          inset: (x: 0.8cm, y: 0.3cm),
+          align(horizon, text(fill: IMtext_orange, size: 20pt, slide_title)),
+          height: 60%,
+          width: 100%,
+        ),
+      ),
+
+      align(horizon, grid(
+        columns: (0.8cm, 1fr, 0.8cm),
+        [], content, [],
+      )),
 
       grid(
         rows: 1fr,
@@ -124,38 +123,33 @@
   reviewer: none,
   date: datetime.today().display("[day].[month].[year]"),
 ) = {
+  set text(fill: black)
   slide(
     grid(
       columns: 100%,
-      // auto = под контент, 1fr = "растяжимый" отступ (аналог \vfill)
       rows: (auto, 1fr, auto, 1fr, auto, 1fr, auto, 1fr, auto, 1fr, auto),
       gutter: 0pt,
       align: center + horizon,
 
-      // 1. Институт
-      text(size: 16pt)[#institute],
+
+      text(size: 24pt)[#institute],
       [],
 
-      // 2. Заголовок (в цветном блоке как в \begin{block}{})
-      rect(
-        stroke: IMgray,
-        inset: 14pt,
-        radius: 4pt,
-        width: 100%,
-        text(size: 26pt, weight: "bold")[#title],
+
+      shadow_box(
+        text(size: 28pt, weight: "bold", title),
       ),
+
       [],
 
       // 3. Автор
-      text(size: 20pt, weight: "bold")[#author],
+      text(size: 28pt, weight: "bold")[#author],
       [],
 
       // 4. Направление подготовки
-      text(size: 14pt)[Направление #direction],
+      text(size: 21pt)[Направление #direction],
       [],
-
-      // 5. Научный руководитель / Рецензент (таблица lr как в оригинале)
-      if reviewer != none {
+      text(size: 21pt, if reviewer != none {
         grid(
           columns: 2,
           column-gutter: 2.5em,
@@ -170,19 +164,16 @@
           align: (left, right),
           [Научный руководитель], [#supervisor],
         )
-      },
-      // Город
-      town,
-
-      // 6. Дата
-      text(size: 10pt)[#date],
+      }),
+      text(size: 17pt)[#town],
+      text(size: 17pt)[#date],
     ),
   )
 }
 
 #let thank_you_slide = slide[
   #align(horizon + center)[
-    #text(size: 24pt, "Спасибо за внимание!")
-    #image("assets/IMLogo.png")
+    #text(size: 48pt, "Спасибо за внимание!")
   ]
+
 ]

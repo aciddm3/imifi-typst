@@ -24,6 +24,7 @@
   size: 16pt,
   lang: "ru",
   hyphenate: true,
+  fill : black,
 )
 
 #set text(fill: IMgray)
@@ -43,19 +44,49 @@
 
   Преобразованием Фурье функции $f$ называют оператор $F$:
   #align(center)[
-    #text(size: 45pt)[
-      $F[f](omega) = frac(1, sqrt(2pi)) integral_(-oo)^(+oo)f(t) e^(-i omega t) d t$
+    #text(size: 20pt)[
+      $ F[f](omega) = frac(1, sqrt(2pi)) integral_(-oo)^(+oo)f(t) e^(-i omega t) d t $
     ]
   ]
 ]
 
 #IMslide(author: author, slide_title: "Слайд", subtitle: subtitle)[
-  #for value in (1,2,3,4,5) {
-    text(size: value * 10pt)[
+  #for value in range(1, 6).map(it => it*10pt) {
+    text(size: value)[
       $F[f](omega) = frac(1, sqrt(2pi)) integral_(-oo)^(+oo)f(t) e^(-i omega t) d t$
-
+    ]
+    [
+      размер : #value
+    
     ]
   }
+]
+
+#IMslide(author: author, slide_title: "Слайд с проверкой списков и перечислений", subtitle: subtitle)[
+  Что должно быть доступно в РФ?
+  - Хлеб,
+  - Молоко,
+  - Соль,
+  - Мясо...
+
+  Топ лучших исполнителей 2027
+  1. Erian
+  2. dj Arbuz
+  3. Ampersand
+
+]
+
+#IMslide(author: author, slide_title: "Тест блоков текста", subtitle: subtitle)[
+  #block(title: "Теорема")[
+    #let sgn = $"sgn"$
+    #let mif = $"if"$
+    #let otherwise = $"otherwise"$
+    Функция $ sgn(x) = cases( 1 &mif x > 0, 0 &mif x = 0, -1 &mif x < 0) $ счётна и почти всюду дифференцируема.
+  ]
+]
+
+#IMslide(author: author, slide_title: "Тест shadow gradient", subtitle: subtitle)[
+  #shadow_box()[constent]
 ]
 
 #thank_you_slide
