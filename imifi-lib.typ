@@ -8,6 +8,12 @@
 #let IMblue = rgb("#0000ff")        // от \bluetext
 #let IMvery_light_gray = rgb("#f2f2f2")
 
+/// Блок с бортиками, стилизованными под тень
+/// 
+/// - inset ():  минимальное расстояние от контента до краёв
+/// - radius (): радиус скругления углов
+/// - content (): содержимое
+/// -> 
 #let shadow_box(inset: 14pt, radius: 16pt, content) = box(
   width: 100%,
   radius: radius,
@@ -54,7 +60,7 @@
       columns: 100%,
       gutter: 0pt,
 
-
+      // Верхняя часть слайда: шапка и название
       stack(
         grid(
           columns: (1fr, 1fr),
@@ -83,11 +89,13 @@
         ),
       ),
 
+      // Контент слайда
       align(horizon, grid(
         columns: (0.8cm, 1fr, 0.8cm),
         [], content, [],
       )),
 
+      // низ слайда
       grid(
         rows: 1fr,
         columns: (15%, 55%, 30%),
